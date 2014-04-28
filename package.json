@@ -1,0 +1,51 @@
+{
+  "name": "vinsight-lib-config-etcd",
+  "description": "config lib with etcd support",
+  "version": "0.1.0",
+  "author": {
+    "name": "Valiton GmbH",
+    "email": "bigdata@valiton.com",
+    "url": "http://www.valiton.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab-openvpn:bigdata/vinsight-lib-config-etcd.git"
+  },
+  "bugs": {
+    "url": "https://jira.novalocal/"
+  },
+  "main": "lib/configetcd.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "dependencies": {
+    "optimist": "0.4.0",
+    "convict": "0.1.0",
+    "lodash": "~1.2.0",
+    "flat": "^1.2.1",
+    "discover-client": "git+https://github.com/starkj/discover-client-node.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-coffee": "~0.10.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-coffeelint": "~0.0.8",
+    "grunt-jsdoc": "~0.5.4",
+    "grunt-jasmine-node": "~0.2.1",
+    "grunt-replace": "~0.7.6",
+    "grunt-istanbul": "~0.2.5",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-funky-bump": "~0.3.0",
+    "grunt-exec": "~0.4.5",
+    "jasmine-matchers": "~0.2.3",
+    "semver": "~2.2.1",
+    "rewire": "~2.0.0"
+  },
+  "keywords": [
+    "vInsight",
+    "configetcd"
+  ],
+  "scripts": {
+    "test": "grunt vihbm"
+  }
+}

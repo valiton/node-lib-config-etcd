@@ -1,0 +1,14 @@
+.DS_Store
+.bundle
+.project
+.idea
+.lock
+node_modules
+npm-debug.log
+reports
+coverage
+sauce_connect.log
+log
+tmp
+test.coffee
+*.swp
