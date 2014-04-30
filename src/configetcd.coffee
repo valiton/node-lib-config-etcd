@@ -9,6 +9,7 @@
  * Standard library imports
 ###
 EventEmitter = require('events').EventEmitter
+path = require 'path'
 
 
 ###*
@@ -37,8 +38,10 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @param {object} config read more about config options in README
    * @this {ConfigEtcd}
   ###
-  constructor: (@config) ->
-
+  constructor: ->
+    @config = null
+    # used for comparison if config has changed
+    @flattenedConfig = null
 
   ###*
    * initalize the ConfigEtcd-Instance
@@ -60,49 +63,100 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @param    {Function} cb callback if it needs to be asynchronous
   ###
   load: (cb) ->
-    schema = convict require(path.join(process.cwd(), './lib/config/schema'))
+    @_loadBaseConfig()
+
+    @_resolveEtcd =>
+      @_buildConfig()
+      @emit 'loaded'
+      if typeof cb is 'function'
+        cb @config
+
+  ###*
+   * get config
+   *
+   * @function global.Config.prototype.getConfig
+  ###
+  getConfig: ->
+    @_buildConfig()
+    return @config
+
+  ###*
+   * build configuration
+   *
+   * @function global.Config.prototype._buildConfig
+   * @private
+  ###
+  _buildConfig: ->
+    buildConfig = {}
+
+    for key, value of @flattened
+      do (key, value) ->
+        if typeof value is 'object' and typeof value.url is 'function'
+          hostPort = value.url().match /.*\:\/\/(.*)$/
+          buildConfig[key] = hostPort[1]
+        else
+          buildConfig[key] = value
+
+    @flattenedConfig = buildConfig
+
+    @config = flat.unflatten buildConfig
+    
+
+  ###*
+   * resolves regular config parameters
+   *
+   * @function global.Config.prototype._resolveStandardConfig
+   * @private
+  ###
+  _loadBaseConfig: ->
+    schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
     env = argv.VINSIGHT_ENV or process.env.VINSIGHT_ENV
     config = _.extend(
       schema.loadFile path.join(process.cwd(), 'config/config.json')
       schema.loadFile path.join(process.cwd(), "config/#{env}.json")
     ).validate()
 
-    config = _.cloneDeep JSON.parse(config.toString()), (value) ->
+    @baseConfig = _.cloneDeep JSON.parse(config.toString()), (value) ->
       return unless typeof value is 'string'
 
       if value.indexOf("ENV::") is 0
         return process.env[value.substring(5)] or "ENV_VAR_#{envVar}_NO_SET"
 
-    return config unless typeof cb is 'function'
-
-    @_resolveEtcd config, cb
-
-
   ###*
-   * resolves etcd...
+   * resolves etcd config parameters
    *
    * @function global.Config.prototype._resolveEtcd
    * @param    {Object} Config
    * @param    {Function} cb
    * @private
   ###
-  _resolveEtcd: (config, cb) ->
+  _resolveEtcd: (cb) ->
     throw new Error('Discover service not initialized. You need to call init() first.') if typeof @discover is 'undefined'
-    flattened = flat.flatten config
-    remaining = Object.keys(flattened).length
+    @flattened = flat.flatten @baseConfig
+    remaining = Object.keys(@flattened).length
 
-    for key, value of flattened
+    for key, value of @flattened
       do (key, value) =>
         unless value.indexOf('ETCD::') is 0
           if --remaining is 0
-            return cb flat.unflatten(flattened)
-
+            cb()
+          return
         item = value.substring 6
-        service = @discover.resolve item
-        service.on 'resolved', ->
-          hostPort = service.url().match /.*\:\/\/(.*)$/
-          flattened[key] = hostPort[1]
+        @flattened[key] = @discover.resolve item
+
+        @flattened[key].on 'resolved', ->
           if --remaining is 0
-            cb flat.unflatten(flattened)
-        service.on 'notfound', ->
+            cb()
+
+        @flattened[key].on 'changed', =>
+          console.log key
+          console.log @flattenedConfig
+          console.log @flattenedConfig[key]
+          console.log @flattened[key].list()
+          if @flattenedConfig[key] not in @flattened[key].list()
+            @emit 'changed'
+
+        @flattened[key].on 'notfound', ->
           throw new Error "Could not resolve config #{value}"
+
+

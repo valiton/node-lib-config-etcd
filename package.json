@@ -23,7 +23,7 @@
     "convict": "0.1.0",
     "lodash": "~1.2.0",
     "flat": "^1.2.1",
-    "discover-client": "git+https://github.com/starkj/discover-client-node.git"
+    "discover-client": "git+https://git@github.com/starkj/discover-client-node.git#master"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
