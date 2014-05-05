@@ -1,0 +1,10 @@
+{
+
+  // and comments are allowed!
+  "prop2": "value2-new",
+  "prop3": {
+    "prop32": {
+      "prop322": "value322-new"
+    }
+  }
+}

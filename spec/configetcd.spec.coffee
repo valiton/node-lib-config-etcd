@@ -1,6 +1,7 @@
 require 'jasmine-matchers'
 path = require 'path'
 rewire = require 'rewire'
+flat = require 'flat'
 ConfigEtcd = rewire "#{process.cwd()}/lib/configetcd"
 
 serviceVars =
@@ -16,7 +17,7 @@ class ServiceMock
   list: ->
     serviceVars
   on: (event, cb) ->
-    process.nextTick =>
+    process.nextTick ->
       if event == 'resolved'
         cb?()
       if event == 'changed'
@@ -108,33 +109,14 @@ describe 'ConfigEtcd', ->
     configInstance = new ConfigEtcd()
     configInstance.discover = new DiscoverMock()
     configInstance.baseConfig = testConfig
+    configInstance.flattened = flat.flatten testConfig
+    configInstance._loadBaseConfig = ->
 
-    configInstance._resolveEtcd ->
+    configInstance.load ->
       config = configInstance.getConfig()
       expect(config).toEqual expected
       done()
 
-  it 'should initialize the config and replace etcd values', (done) ->
-
-    testConfig =
-      "hans": "ETCD::hans"
-      "hans2":
-        "hans3": "ETCD::hans3"
-
-    expected =
-      "hans": "wurst:4711"
-      "hans2":
-        "hans3": "wurst3:1234"
-
-    configInstance = new ConfigEtcd()
-    configInstance.discover = new DiscoverMock()
-    configInstance.baseConfig = testConfig
-    configInstance._buildConfig()
-
-    configInstance._resolveEtcd ->
-      config = configInstance.getConfig()
-      expect(config).toEqual expected
-      done()
 
   it 'should emit a changed event if an etcd value changes an provide an updated config', (done) ->
     testConfig =
@@ -150,13 +132,16 @@ describe 'ConfigEtcd', ->
     configInstance = new ConfigEtcd()
     configInstance.discover = new DiscoverMock()
     configInstance.baseConfig = testConfig
+    configInstance.flattened = flat.flatten testConfig
+    configInstance._loadBaseConfig = ->
 
-    configInstance._resolveEtcd ->
+    configInstance.load ->
       serviceVars.hans3 = "tcp://wurst3:4711"
-      changeCallback()
 
-    configInstance.on 'changed', ->
-      config = configInstance.getConfig()
-      expect(config).toEqual expected
-      done()
+      configInstance.on 'changed', ->
+        config = configInstance.getConfig()
+        expect(config).toEqual expected
+        done()
+
+      changeCallback()
 

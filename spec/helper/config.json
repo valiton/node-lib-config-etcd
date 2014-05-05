@@ -1,0 +1,12 @@
+{
+  // and comments are allowed!
+  "prop1": "value1",
+  "prop2": "value2",
+  "prop3": {
+    "prop31": "value31",
+    "prop32": {
+      "prop321": "value321",
+      "prop322": "value322"
+    }
+  }
+}

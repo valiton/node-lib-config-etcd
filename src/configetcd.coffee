@@ -35,13 +35,13 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @memberOf global
    *
    * @constructor
-   * @param {object} config read more about config options in README
    * @this {ConfigEtcd}
   ###
   constructor: ->
     @config = null
     # used for comparison if config has changed
     @flattenedConfig = null
+    this
 
   ###*
    * initalize the ConfigEtcd-Instance
@@ -77,7 +77,6 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @function global.Config.prototype.getConfig
   ###
   getConfig: ->
-    @_buildConfig()
     return @config
 
   ###*
@@ -122,6 +121,8 @@ module.exports = class ConfigEtcd extends EventEmitter
       if value.indexOf("ENV::") is 0
         return process.env[value.substring(5)] or "ENV_VAR_#{envVar}_NO_SET"
 
+    @flattened = flat.flatten @baseConfig
+
   ###*
    * resolves etcd config parameters
    *
@@ -132,7 +133,7 @@ module.exports = class ConfigEtcd extends EventEmitter
   ###
   _resolveEtcd: (cb) ->
     throw new Error('Discover service not initialized. You need to call init() first.') if typeof @discover is 'undefined'
-    @flattened = flat.flatten @baseConfig
+
     remaining = Object.keys(@flattened).length
 
     for key, value of @flattened
@@ -149,14 +150,9 @@ module.exports = class ConfigEtcd extends EventEmitter
             cb()
 
         @flattened[key].on 'changed', =>
-          console.log key
-          console.log @flattenedConfig
-          console.log @flattenedConfig[key]
-          console.log @flattened[key].list()
           if @flattenedConfig[key] not in @flattened[key].list()
+            @_buildConfig()
             @emit 'changed'
 
         @flattened[key].on 'notfound', ->
           throw new Error "Could not resolve config #{value}"
-
-

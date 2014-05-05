@@ -12,3 +12,4 @@ log
 tmp
 test.coffee
 *.swp
+/lib
