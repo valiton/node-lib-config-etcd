@@ -38,10 +38,9 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @this {ConfigEtcd}
   ###
   constructor: ->
+    @services = []
+    @trackChange = []
     @config = null
-    # used for comparison if config has changed
-    @flattenedConfig = null
-    this
 
   ###*
    * initalize the ConfigEtcd-Instance
@@ -89,14 +88,23 @@ module.exports = class ConfigEtcd extends EventEmitter
     buildConfig = {}
 
     for key, value of @flattened
-      do (key, value) ->
-        if typeof value is 'object' and typeof value.url is 'function'
-          hostPort = value.url().match /.*\:\/\/(.*)$/
-          buildConfig[key] = hostPort[1]
+      do (key, value) =>
+
+        if value.indexOf('ETCD_') is 0
+
+          service = value.substring(11)
+          url = @services[service].url()
+          @trackChange[service] = url
+
+          hostPort = url.match /.*\:\/\/(.*):(.*)$/
+
+          if value.indexOf('ETCD_HOST::') is 0
+            buildConfig[key] = hostPort[1]
+          else if value.indexOf('ETCD_PORT::') is 0
+            buildConfig[key] = hostPort[2]
+
         else
           buildConfig[key] = value
-
-    @flattenedConfig = buildConfig
 
     @config = flat.unflatten buildConfig
     
@@ -138,21 +146,22 @@ module.exports = class ConfigEtcd extends EventEmitter
 
     for key, value of @flattened
       do (key, value) =>
-        unless value.indexOf('ETCD::') is 0
+        service = value.substring 11
+        unless value.indexOf('ETCD_') is 0 or @services[service]
           if --remaining is 0
             cb()
           return
-        item = value.substring 6
-        @flattened[key] = @discover.resolve item
 
-        @flattened[key].on 'resolved', ->
+        @services[service] = @discover.resolve service
+
+        @services[service].on 'resolved', ->
           if --remaining is 0
             cb()
 
-        @flattened[key].on 'changed', =>
-          if @flattenedConfig[key] not in @flattened[key].list()
+        @services[service].on 'changed', =>
+          if @trackChange[service] not in @services[service].list()
             @_buildConfig()
             @emit 'changed'
 
-        @flattened[key].on 'notfound', ->
+        @services[service].on 'notfound', ->
           throw new Error "Could not resolve config #{value}"

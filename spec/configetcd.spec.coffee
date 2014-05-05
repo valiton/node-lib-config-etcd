@@ -98,14 +98,18 @@ describe 'ConfigEtcd', ->
   it 'should initialize the config and replace etcd values', (done) ->
 
     testConfig =
-      "hans": "ETCD::hans"
+      "hanshost": "ETCD_HOST::hans"
+      "hansport": "ETCD_PORT::hans"
       "hans2":
-        "hans3": "ETCD::hans3"
+        "hans3host": "ETCD_HOST::hans3"
+        "hans3port": "ETCD_PORT::hans3"
 
     expected =
-      "hans": "wurst:4711"
+      "hanshost": "wurst"
+      "hansport": "4711"
       "hans2":
-        "hans3": "wurst3:1234"
+        "hans3host": "wurst3"
+        "hans3port": "1234"
     configInstance = new ConfigEtcd()
     configInstance.discover = new DiscoverMock()
     configInstance.baseConfig = testConfig
@@ -120,14 +124,18 @@ describe 'ConfigEtcd', ->
 
   it 'should emit a changed event if an etcd value changes an provide an updated config', (done) ->
     testConfig =
-      "hans": "ETCD::hans"
+      "hanshost": "ETCD_HOST::hans"
+      "hansport": "ETCD_PORT::hans"
       "hans2":
-        "hans3": "ETCD::hans3"
+        "hans3host": "ETCD_HOST::hans3"
+        "hans3port": "ETCD_PORT::hans3"
 
     expected =
-      "hans": "wurst:4711"
+      "hanshost": "wurst"
+      "hansport": "4711"
       "hans2":
-        "hans3": "wurst3:4711"
+        "hans3host": "wurst3"
+        "hans3port": "4711"
 
     configInstance = new ConfigEtcd()
     configInstance.discover = new DiscoverMock()
