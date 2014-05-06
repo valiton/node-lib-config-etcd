@@ -93,12 +93,12 @@ module.exports = class ConfigEtcd extends EventEmitter
         if value.indexOf('ETCD_') is 0
 
           service = value.substring(11)
-          throw Error("Service object for service #{service} not available") unless @services[service]
+          throw Error("Service object for service #{service} not available") unless @services[service]?
           url = @services[service].url()
           @trackChange[service] = url
 
           hostPort = url.match /.*\:\/\/(.*):(.*)$/
-          throw Error("Invalid ETCD service url format for url #{url}") unless hostPort
+          throw Error("Invalid ETCD service url format for url #{url}") unless hostPort?
 
           if value.indexOf('ETCD_HOST::') is 0
             buildConfig[key] = hostPort[1]
@@ -152,7 +152,7 @@ module.exports = class ConfigEtcd extends EventEmitter
       do (key, value) =>
         service = value.substring 11
         # continue if it's not a ETCD value or if etcd service already exists
-        unless value.indexOf('ETCD_') is 0 or @services[service]
+        unless value.indexOf('ETCD_') is 0 or @services[service]?
           if --remaining is 0
             cb()
           return
