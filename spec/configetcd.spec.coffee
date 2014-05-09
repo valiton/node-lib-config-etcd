@@ -98,6 +98,7 @@ describe 'ConfigEtcd', ->
   it 'should initialize the config and replace etcd values', (done) ->
 
     testConfig =
+      "bool": true
       "hanshost": "ETCD_HOST::hans"
       "hansport": "ETCD_PORT::hans"
       "hans2":
@@ -105,6 +106,7 @@ describe 'ConfigEtcd', ->
         "hans3port": "ETCD_PORT::hans3"
 
     expected =
+      "bool": true
       "hanshost": "wurst"
       "hansport": "4711"
       "hans2":

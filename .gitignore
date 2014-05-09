@@ -12,3 +12,5 @@ log
 tmp
 test.coffee
 *.swp
+spec-integration-lib/
+spec-lib/
