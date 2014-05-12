@@ -8,10 +8,11 @@ config lib with etcd support
 
 ## Benutzung
 
-    config = {}
-    ConfigEtcd = require 'vinsight-lib-config-etcd'
-    configetcd = new ConfigEtcd config
-    configetcd.init()
+    configEtcd = require 'vinsight-lib-config-etcd'
+    configEtcd.load()
+    configEtcd.on 'loaded', ->
+      config = configEtcd.getConfig()
+      // start application
 
 
 ## Beispiele
@@ -30,9 +31,7 @@ siehe Folder **examples**
 
 ### Methoden
 
-#### init
-
-Muss mit der Konfiguration **config** aufgerufen werden
+#### load
 
 ## Entwicklung
 
@@ -50,7 +49,7 @@ Muss mit der Konfiguration **config** aufgerufen werden
     $ grunt dev
 
 
-###### Jasmine Tests laufen lassen 
+###### Jasmine Tests laufen lassen
 
 lässt intern **grunt vihbm** laufen - definiert im scripts-block der package.json
 
