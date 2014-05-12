@@ -94,7 +94,7 @@ module.exports = class ConfigEtcd extends EventEmitter
 
           service = value.substring(11)
           throw Error("Service object for service #{service} not available") unless @services[service]?
-          url = @services[service].url()
+          url = @services[service].uri()
           @trackChange[service] = url
 
           hostPort = url.match /.*\:\/\/(.*):(.*)$/

@@ -12,7 +12,7 @@ changeCallback = null
 
 class ServiceMock
   constructor: (@key) ->
-  url: ->
+  uri: ->
     serviceVars[@key]
   list: ->
     serviceVars
