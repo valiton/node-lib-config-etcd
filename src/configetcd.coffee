@@ -152,7 +152,7 @@ module.exports = class ConfigEtcd extends EventEmitter
       do (key, value) =>
         service = ""
         # continue if it's not an ETCD value or if etcd service already exists
-        unless (typeof value is 'string') and (service = value.substring 11) and ( value.indexOf('ETCD_') is 0 or @services[service]? )
+        unless (typeof value is 'string') and (service = value.substring 11) and ( value.indexOf('ETCD_') is 0 ) and not @services[service]?
           if --remaining is 0
             cb()
           return
