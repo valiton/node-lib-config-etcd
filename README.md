@@ -55,6 +55,13 @@ lässt intern **grunt vihbm** laufen - definiert im scripts-block der package.js
 
     $ npm test
 
+Damit die Tests erfolgreich durchlaufen, muss die Zeile `124` in der Datei `src/configetcd.coffee` wie folgt angepasst werden:
+
+    +    schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
+    -    schema = convict require(path.join(process.cwd(), './lib/config/schema'))
+
+Jasmine ersetzt da irgendwelche String-Values, wohl um die Coverage messen zu können.
+
 ###### Library releasen
 
     $ grunt release:xxx (wobei xxx = __major__, __minor__ oder __patch__ sein kann)
