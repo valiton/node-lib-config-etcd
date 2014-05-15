@@ -120,7 +120,9 @@ module.exports = class ConfigEtcd extends EventEmitter
    * @private
   ###
   _loadBaseConfig: ->
-    schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
+    # TODO if you wanna run the test use the following line as jasmine overwrites string values
+    #schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
+    schema = convict require(path.join(process.cwd(), './lib/config/schema'))
     env = argv.VINSIGHT_ENV or process.env.VINSIGHT_ENV
     config = _.extend(
       schema.loadFile path.join(process.cwd(), 'config/config.json')
