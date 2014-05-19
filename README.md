@@ -75,10 +75,6 @@ und siehe Folder **examples**
 
 **doc/index.html** im Browser öffnen
 
-### Config
-
-
-
 ### Methoden
 
 #### load()
