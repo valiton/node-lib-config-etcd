@@ -1,9 +1,19 @@
 # run this from your project-directory like this:
+# $ export ETCD_HOST=<etcd-host> # default etcd
+# $ export ETCD_PORT=<etcd-port> # default 4001
+# $ export ETCD_PREFIX=<etcd-prefix> # default discover
 # $ coffee examples/configetcd.coffee
 
-ConfigEtcd = require "#{process.cwd()}/src/configetcd"
+configEtcd = require "#{process.cwd()}/src/configetcd"
 
-config = {}
+configEtcd.load()
+configEtcd.on 'loaded', ->
 
-configetcd = new ConfigEtcd config
-configetcd.init()
+  config = configEtcd.getConfig()
+  console.log config
+
+configEtcd.on 'changed', ->
+
+  newConfig = configEtcd.getConfig()
+  console.log newCconfig
+
