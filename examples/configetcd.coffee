@@ -6,7 +6,6 @@
 
 configEtcd = require "#{process.cwd()}/src/configetcd"
 
-configEtcd.load()
 configEtcd.on 'loaded', ->
 
   config = configEtcd.getConfig()
@@ -17,3 +16,4 @@ configEtcd.on 'changed', ->
   newConfig = configEtcd.getConfig()
   console.log newCconfig
 
+configEtcd.load()

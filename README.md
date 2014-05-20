@@ -60,13 +60,16 @@ Die Default-Werte sind folgende:
 ## Beispiele
 
     configEtcd = require 'vinsight-lib-config-etcd'
-    configEtcd.load()
+
     configEtcd.on 'loaded', ->
       config = configEtcd.getConfig()
       # start application
+
     configEtcd.on 'changed', ->
       newConfig = configEtcd.getConfig()
       # reconfigure application
+
+    configEtcd.load()
 
 
 und siehe Folder **examples**
