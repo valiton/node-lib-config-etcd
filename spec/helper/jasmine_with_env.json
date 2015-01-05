@@ -4,7 +4,7 @@
   "prop2": "value2-new",
   "prop3": {
     "prop32": {
-      "prop322": "ENV::VINSIGHT_ENV"
+      "prop322": "ENV::NODE_ENV"
     }
   }
 }

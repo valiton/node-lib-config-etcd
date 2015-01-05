@@ -1,25 +1,25 @@
-# vinsight-lib-config-etcd
+# lib-config-etcd
 
 config lib with etcd support
 
 ## Installation
 
-    $ npm install git+ssh://git@gitlab-openvpn:bigdata/vinsight-lib-config-etcd.git --save
+    $ npm install git+ssh://git@gitlab-openvpn:bigdata/lib-config-etcd.git --save
 
 ## Benutzung
 
-### VINSIGHT_ENV
+### NODE_ENV
 
-Set this environment var in your home-directory (eg. .bash_profile) or run this application with --VINSIGHT_ENV=...
+Set this environment var in your home-directory (eg. .bash_profile) or run this application with --NODE_ENV=...
 
 ### Benötigte Dateien
 
 * config/config.json
-* config/{env}.json (where ENV is the environment var VINSIGHT_ENV)
+* config/{env}.json (where ENV is the environment var NODE_ENV)
 * config/schema.coffee (the validation schema)
 
 ### ENV
-`vinsight-lib-config-etcd` hat das Feature aus der alten `vinsight-lib-config` übernommen, Konfigurationswerte aus dem Environment einzulesen. Solche Parameter müssen mit dem Prefix `ENV::` gekennzeichnet sein:
+`lib-config-etcd` hat das Feature aus der alten `lib-config` übernommen, Konfigurationswerte aus dem Environment einzulesen. Solche Parameter müssen mit dem Prefix `ENV::` gekennzeichnet sein:
 
     $ export MYKEY=0123456789
 
@@ -42,7 +42,7 @@ Es folgt das entsprechende Format der Konfigurationsdatei:
         }
     }
 
-Damit `vinsight-lib-config-etcd` Services in ETCD finden kann, müssen diese zuvor über [discover](https://github.com/totem/discover) registriert worden sein. `vinsight-lib-config-etcd` nutzt intern den [discover-client](https://github.com/totem/discover-client-node)
+Damit `lib-config-etcd` Services in ETCD finden kann, müssen diese zuvor über [discover](https://github.com/totem/discover) registriert worden sein. `lib-config-etcd` nutzt intern den [discover-client](https://github.com/totem/discover-client-node)
 
 #### Configuring ETCD
 
@@ -59,7 +59,7 @@ Die Default-Werte sind folgende:
 
 ## Beispiele
 
-    configEtcd = require 'vinsight-lib-config-etcd'
+    configEtcd = require 'lib-config-etcd'
 
     configEtcd.on 'loaded', ->
       config = configEtcd.getConfig()
@@ -100,7 +100,7 @@ Dieses Event wird emittiert, sobald eine Änderung in der Konfiguration statt ge
 
 ###### Applikation klonen
 
-    $ git clone git@gitlab-openvpn:bigdata/vinsight-lib-config-etcd.git
+    $ git clone git@gitlab-openvpn:bigdata/lib-config-etcd.git
 
 
 ###### Alle Module installieren
