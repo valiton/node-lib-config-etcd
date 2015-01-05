@@ -4,7 +4,7 @@ config lib with etcd support
 
 ## Installation
 
-    $ npm install git+ssh://git@gitlab-openvpn:bigdata/lib-config-etcd.git --save
+    $ npm install git+ssh://git@github.com:valiton/node-lib-config-etcd.git --save
 
 ## Benutzung
 
@@ -12,18 +12,19 @@ config lib with etcd support
 
 Set this environment var in your home-directory (eg. .bash_profile) or run this application with --NODE_ENV=...
 
-### Benötigte Dateien
+### Necessary files
 
 * config/config.json
 * config/{env}.json (where ENV is the environment var NODE_ENV)
 * config/schema.coffee (the validation schema)
 
 ### ENV
-`lib-config-etcd` hat das Feature aus der alten `lib-config` übernommen, Konfigurationswerte aus dem Environment einzulesen. Solche Parameter müssen mit dem Prefix `ENV::` gekennzeichnet sein:
+`lib-config-etcd` can load values form envioronment variable.
+Use the prefix `ENV::` to load a config value from a environment variabel:
 
     $ export MYKEY=0123456789
 
-Es folgt das entsprechende Format der Konfigurationsdatei:
+Used in config.json:
 
     {
         "config": {
@@ -42,22 +43,21 @@ Es folgt das entsprechende Format der Konfigurationsdatei:
         }
     }
 
-Damit `lib-config-etcd` Services in ETCD finden kann, müssen diese zuvor über [discover](https://github.com/totem/discover) registriert worden sein. `lib-config-etcd` nutzt intern den [discover-client](https://github.com/totem/discover-client-node)
+To alow `lib-config-etcd` to find service in ETCD, the service have to be registerd e.g. by using [discover](https://github.com/totem/discover)
+`lib-config-etcd` uses internal the [discover-client](https://github.com/totem/discover-client-node)
 
 #### Configuring ETCD
 
-Die Lib kann über die ENV-Variablen oder CLI-Parameter `ETCD_HOST`, `ETCD_PORT` und `ETCD_PREFIX` konfiguriert werden.
+`lib-config-etcd`  uses envioronment variable or CLI-parameter `ETCD_HOST`, `ETCD_PORT`, `ETCD_PREFIX`  to find the ETCD Servers.
 
-Auf dem angegebenen Host muss auf dem angegebenen Port ein ETCD-Service laufen. Man hat zusätzlich die Möglichkeit, alle seine Services unterhalb eines Prefixes zu registrieren.
-
-Die Default-Werte sind folgende:
+Default values are the following
 
 - ETCD_HOST etcd
 - ETCD_PORT 4001
 - ETCD_PREFIX discover
 
 
-## Beispiele
+## Example.coffee
 
     configEtcd = require 'lib-config-etcd'
 
@@ -72,62 +72,57 @@ Die Default-Werte sind folgende:
     configEtcd.load()
 
 
-und siehe Folder **examples**
+see folder **examples**
 
 ## Api-Dokumentation
 
-**doc/index.html** im Browser öffnen
+**doc/index.html** open in Brower
 
 ### Methoden
 
 #### load()
-`laod()` veranlasst die Lib dazu, die Konfiguration zu laden und nedem den JSON-Konfigurationsdateien, ENV-Werte und ETCD-Werte aufzulösen.
+`laod()` load's the config. Config loading is async since it has make network calls to etcd.
 
 #### getConfig()
-`getConfig()` liefert das fertig aufbereitet Konfigurations-Objekt zurück. Die Funktion kann aufgerufen werden, sobald das Event `loaded` (s.u.) emittiert wurde.
+`getConfig()` get the current config values. Only avalible after the `loaded` event got fired.
 
 #### on('event', cb)
-`on('event', cb)` dient dem Registrieren von Event-Handlern (s.u.).
+`on('event', cb)` register event hanlder
 
 ### Events
 #### loaded
-Diese Event wird emittiert, sobald die Konfiguration vollständig geladen ist. Die Konfiguration kann dann über `getConfig()` abgerufen werden.
+event fires when config is load and  `getConfig()` can be used.
 
 ##### changed
-Dieses Event wird emittiert, sobald eine Änderung in der Konfiguration statt gefunden hat. Eine Applikation hat dann die Möglichkeit, die aktualisierte Konfiguration über `getConfig()` abzurufen.
+event fires when a config change in etcd happes.
+To get the updated config value use `getConfig()` 
 
-## Entwicklung
+## Developlment
 
-###### Applikation klonen
+###### clone repo
 
-    $ git clone git@gitlab-openvpn:bigdata/lib-config-etcd.git
+    $ git clone git@github.com:valiton/node-lib-config-etcd.git
 
 
-###### Alle Module installieren
+###### install node module
 
     $ npm install
 
-###### Development-Workflow/und watch (jeder Code-Change restarted die Tests)
+###### Development-Workflow/ and watch (each code change restarts the build)
 
     $ grunt dev
 
 
-###### Jasmine Tests laufen lassen
+###### run Jasmine tests 
 
-lässt intern **grunt vihbm** laufen - definiert im scripts-block der package.json
+runs internal **grunt vihbm** 
 
     $ npm test
 
-Damit die Tests erfolgreich durchlaufen, muss die Zeile `124` in der Datei `src/configetcd.coffee` wie folgt angepasst werden:
 
-    +    schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
-    -    schema = convict require(path.join(process.cwd(), './lib/config/schema'))
+###### creat release
 
-Jasmine ersetzt da irgendwelche String-Values, wohl um die Coverage messen zu können.
-
-###### Library releasen
-
-    $ grunt release:xxx (wobei xxx = __major__, __minor__ oder __patch__ sein kann)
+    $ grunt release:xxx ( xxx = major || minor || patch )
 
 
 ## Release History
@@ -139,3 +134,5 @@ Jasmine ersetzt da irgendwelche String-Values, wohl um die Coverage messen zu k�
 ## Autoren
 
 * Valiton GmbH
+* Johannes Stark
+* Benedikt Weiner
