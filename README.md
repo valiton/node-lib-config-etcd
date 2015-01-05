@@ -76,12 +76,12 @@ see folder **examples**
 
 ## Api-Dokumentation
 
-**doc/index.html** open in Brower
+[doc/index.html]
 
 ### Methoden
 
 #### load()
-`laod()` load's the config. Config loading is async since it has make network calls to etcd.
+`load()` load's the config. Config loading is async since it has make network calls to etcd.
 
 #### getConfig()
 `getConfig()` get the current config values. Only avalible after the `loaded` event got fired.
