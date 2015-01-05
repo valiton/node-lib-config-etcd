@@ -33,15 +33,19 @@ class DiscoverMock
 describe 'ConfigEtcd', ->
 
   it 'should initialize the config', (done) ->
-    process.env.VINSIGHT_ENV = 'jasmine'
-    spyOn(path, 'join').andCallFake (args...) ->
-      if args[1] is './lib/config/schema'
+    process.env.NODE_ENV = 'jasmine'
+    pathspy = spyOn(path, 'join').andCallFake (args...) ->
+      if args[1].indexOf('lib/config/schema') > -1
         return "#{process.cwd()}/spec/helper/schema"
-      if args[1] is 'config/config.json'
+      if args[1].indexOf('lib/config/schema') > -1
+        return "#{process.cwd()}/spec/helper/schema"
+      if args[1].indexOf('config/config.json') > -1
         return "#{process.cwd()}/spec/helper/config.json"
-      if args[1] is 'config/jasmine.json'
+      if args[1].indexOf('config/jasmine.json') > -1
         return "#{process.cwd()}/spec/helper/jasmine.json"
-      #path.join.call path, args
+
+      # path.join.and.stub()
+
 
     config = new ConfigEtcd()
     config.discover = new DiscoverMock()
@@ -65,14 +69,17 @@ describe 'ConfigEtcd', ->
     config.load()
 
   it 'should initialize the config and replace env values', (done) ->
-    process.env.VINSIGHT_ENV = 'jasmine_with_env'
+    process.env.NODE_ENV = 'jasmine_with_env'
     spyOn(path, 'join').andCallFake (args...) ->
-      if args[1] is './lib/config/schema'
+      if args[1].indexOf('lib/config/schema') > -1
         return "#{process.cwd()}/spec/helper/schema"
-      if args[1] is 'config/config.json'
+      if args[1].indexOf('lib/config/schema') > -1
+        return "#{process.cwd()}/spec/helper/schema"
+      if args[1].indexOf('config/config.json') > -1
         return "#{process.cwd()}/spec/helper/config.json"
-      if args[1] is 'config/jasmine_with_env.json'
+      if args[1].indexOf('config/jasmine_with_env.json') > -1
         return "#{process.cwd()}/spec/helper/jasmine_with_env.json"
+
       #path.join.call path, args
 
     config = new ConfigEtcd()
