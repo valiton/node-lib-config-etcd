@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitlab.valiton.com/sso/lib-config-etcd.git"
+    "url": "ttps://github.com/valiton/node-lib-config-etcd"
   },
   "bugs": {
     "url": "https://jira.novalocal/"
