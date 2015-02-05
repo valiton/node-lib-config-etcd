@@ -44,7 +44,7 @@ module.exports = class ConfigEtcd extends EventEmitter
     @_loadBaseConfig()
     @_resolveEtcd =>
       @_buildConfig()
-      @emit 'loaded'
+      process.nextTick => @emit 'loaded'
       cb? @config
 
 
