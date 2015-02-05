@@ -51,7 +51,7 @@ To alow `config-etcd` to find service in ETCD, the service has to be registerd e
 
 Default values are the following
 
-- ETCD_HOST etcd
+- ETCD_HOST localhost
 - ETCD_PORT 4001
 - ETCD_PREFIX discover
 
