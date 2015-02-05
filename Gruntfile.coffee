@@ -2,7 +2,9 @@
 module.exports = (grunt) ->
 
   grunt.initConfig
+
     pkg: grunt.file.readJSON('package.json')
+
     coffeelint:
       app: ["src/**/*.coffee"]
       options:
@@ -22,59 +24,23 @@ module.exports = (grunt) ->
 
     clean:
       before:
-        src: ["coverage", "lib", "reports", "doc"]
-      spec:
-        src: ["spec-lib", "coverage/instrument", "spec-integration-lib"]
-
-    coffee:
-      compile:
-        options:
-          bare: true
-        files: [
-          {expand: true, cwd: './src', src: ['**/*.coffee'], dest: './lib', ext: '.js'}
-          {expand: true, cwd: './spec', src: ['**/*.coffee'], dest: './spec-lib', ext: '.spec.js'}
-          {expand: true, cwd: './spec-integration', src: ['**/*.coffee'], dest: './spec-integration-lib', ext: '.spec.js'}
-        ]
+        src: ['reports', 'doc']
 
     jasmine_node:
       spec:
         options:
-          projectRoot: "./spec-lib"
+          projectRoot: './spec'
+          coffee: true
           jUnit:
             report: true
-            savePath: "reports/"
-            useDotNotation: true
-            consolidate: false
-      integration:
-        options:
-          projectRoot: "./spec-integration-lib"
-          jUnit:
-            report: true
-            savePath: "reports/"
+            savePath: 'reports'
             useDotNotation: true
             consolidate: false
 
-    instrument :
-      files : 'lib/**/*.js'
-      options :
-        basePath : './coverage/instrument/'
-
-    storeCoverage :
-      options :
-        dir : './coverage'
-
-    makeReport :
-      src : './coverage/*.json'
-      options :
-        type : 'cobertura'
-        dir : './coverage'
-        print : 'detail'
-
-    jsdoc:
+    codo:
       dist:
-        src: ['lib/*.js'],
-        options:
-          destination: 'doc'
+        src: ['src/**/*.coffee'],
+        dest: 'doc'
 
     replace:
       coverage:
@@ -86,7 +52,7 @@ module.exports = (grunt) ->
     watch:
       scripts:
         files: ['src/**/*.coffee','spec/**/*.coffee']
-        tasks: ['test_and_run']
+        tasks: ['default']
         options:
           delayTime: 1
           spawn: true
@@ -108,18 +74,16 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-coffeelint'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-jasmine-node'
+  grunt.loadNpmTasks 'grunt-jasmine-node-new'
   grunt.loadNpmTasks 'grunt-istanbul'
   grunt.loadNpmTasks 'grunt-replace'
-  grunt.loadNpmTasks 'grunt-jsdoc'
+  grunt.loadNpmTasks 'grunt-codo'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-funky-bump'
   grunt.loadNpmTasks 'grunt-exec'
 
-  grunt.registerTask 'vihbm', ['coffeelint', 'clean:before', 'coffee', 'instrument', 'replace:coverage', 'jasmine_node:spec', 'storeCoverage', 'makeReport', 'clean:spec', 'jsdoc']
-  grunt.registerTask 'int', ['coffeelint', 'clean:before', 'coffee', 'jasmine_node:integration', 'clean:spec']
-  grunt.registerTask 'test_and_run', ['coffeelint', 'clean:before','coffee', 'jasmine_node:spec', 'clean:spec']
-  grunt.registerTask 'dev', [ 'vihbm', 'watch']
+  grunt.registerTask 'default', ['coffeelint', 'clean', 'jasmine_node', 'codo']
+  grunt.registerTask 'dev', [ 'default', 'watch']
 
   grunt.registerTask 'release', (version) ->
     versions = ['major', 'minor', 'patch']

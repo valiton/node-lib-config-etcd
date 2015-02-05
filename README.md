@@ -4,23 +4,22 @@ config lib with etcd support
 
 ## Installation
 
-    $ npm install git+ssh://git@github.com:valiton/node-lib-config-etcd.git --save
+    $ npm install config-etcd --save
 
 ## Benutzung
 
 ### NODE_ENV
 
-Set this environment var in your home-directory (eg. .bash_profile) or run this application with --NODE_ENV=...
+Set this environment var in your home-directory (eg. `~/.bash_profile`) or run this application with --NODE_ENV=...
 
 ### Necessary files
 
 * config/config.json
 * config/{env}.json (where ENV is the environment var NODE_ENV)
-* config/schema.coffee (the validation schema)
 
 ### ENV
-`lib-config-etcd` can load values form envioronment variable.
-Use the prefix `ENV::` to load a config value from a environment variabel:
+`config-etcd` can load values form envioronment variable.
+Use the prefix `ENV::` to load a config value from an environment variable:
 
     $ export MYKEY=0123456789
 
@@ -43,12 +42,12 @@ Used in config.json:
         }
     }
 
-To alow `lib-config-etcd` to find service in ETCD, the service have to be registerd e.g. by using [discover](https://github.com/totem/discover)
-`lib-config-etcd` uses internal the [discover-client](https://github.com/totem/discover-client-node)
+To alow `config-etcd` to find service in ETCD, the service has to be registerd e.g. by using [discover](https://github.com/totem/discover)
+`config-etcd` uses internal the [discover-client](https://github.com/totem/discover-client-node)
 
 #### Configuring ETCD
 
-`lib-config-etcd`  uses envioronment variable or CLI-parameter `ETCD_HOST`, `ETCD_PORT`, `ETCD_PREFIX`  to find the ETCD Servers.
+`config-etcd`  uses envioronment variable or CLI-parameter `ETCD_HOST`, `ETCD_PORT`, `ETCD_PREFIX`  to find the ETCD Servers.
 
 Default values are the following
 
@@ -59,7 +58,7 @@ Default values are the following
 
 ## Example.coffee
 
-    configEtcd = require 'lib-config-etcd'
+    configEtcd = require 'config-etcd'
 
     configEtcd.on 'loaded', ->
       config = configEtcd.getConfig()
@@ -80,31 +79,55 @@ see folder **examples**
 
 ### Methoden
 
-#### load()
-`load()` load's the config. Config loading is async since it has make network calls to etcd.
+#### load(configPath, callback)
+
+###### configPath
+Type: `String`
+Default value: `./config`
+
+###### callback
+Type: `Function`
+Default value: `null`
+
+`load()` load's the config. Config loading is async since it has to make network calls to etcd.
 
 #### getConfig()
+
 `getConfig()` get the current config values. Only avalible after the `loaded` event got fired.
 
-#### on('event', cb)
-`on('event', cb)` register event hanlder
+#### on(event, cb)
+
+###### event
+
+Type: `String`
+Default value: `null`
+
+###### callback
+
+Type: `Function`
+Default value: `null`
+
+`on('event', cb)` register event handler
 
 ### Events
+
 #### loaded
 event fires when config is load and  `getConfig()` can be used.
 
 ##### changed
 event fires when a config change in etcd happes.
-To get the updated config value use `getConfig()` 
+To get the updated config value use `getConfig()`
 
-## Developlment
+## Development
+
+use [git-flow](https://github.com/nvie/gitflow)!
 
 ###### clone repo
 
     $ git clone git@github.com:valiton/node-lib-config-etcd.git
 
 
-###### install node module
+###### install dependencies
 
     $ npm install
 
@@ -113,26 +136,28 @@ To get the updated config value use `getConfig()`
     $ grunt dev
 
 
-###### run Jasmine tests 
+###### lint, test and build api-docs
 
-runs internal **grunt vihbm** 
+runs internal **grunt**
 
     $ npm test
 
 
-###### creat release
+###### create release
 
     $ grunt release:xxx ( xxx = major || minor || patch )
 
 
 ## Release History
 
-### 0.1.0
+#### 0.1.0 - Initial Version
 
-* Initiale Version
+## Authors (Valiton GmbH)
 
-## Autoren
-
-* Valiton GmbH
 * Johannes Stark
 * Benedikt Weiner
+* Bastian Behrens
+
+## License
+
+Copyright (c) 2015 Valiton GmbH Licensed under the MIT license.

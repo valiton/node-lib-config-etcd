@@ -1,53 +1,33 @@
-###*
- * @name lib-config-etcd
- * @description config lib with etcd support
- * @author Valiton GmbH
-###
+#  @name lib-config-etcd
+#  @description config lib with etcd support
+#  @author Valiton GmbH
 
 
-###*
- * Standard library imports
-###
+# Standard library imports
 EventEmitter = require('events').EventEmitter
 path = require 'path'
 
 
-###*
- * 3rd library imports
-###
+# 3rd library imports
 Discover = require 'discover-client'
-convict = require 'convict'
+cjson = require 'cjson'
 flat = require 'flat'
 argv = require('optimist').argv
 _ = require 'lodash'
 
-###
- * Local imports
-###
-
-
 
 module.exports = class ConfigEtcd extends EventEmitter
 
-  ###*
-   * create a new ConfigEtcd instance,
-   *
-   * @memberOf global
-   *
-   * @constructor
-   * @this {ConfigEtcd}
-  ###
+  # create a new ConfigEtcd instance,
   constructor: ->
     @services = []
     @trackChange = []
     @config = null
 
-  ###*
-   * initalize the ConfigEtcd-Instance
-   *
-   * @function global.ConfigEtcd.prototype.init
-   * @returns {this} the current instance for chaining
-  ###
+
+  # initalize the ConfigEtcd-Instance
+  # @method ConfigEtcd.prototype.init
+  # @return {Object} the current instance for chaining
   init: ->
     etcdHost = argv.ETCD_HOST or process.env.ETCD_HOST or 'etcd'
     etcdPort =  argv.ETCD_PORT or process.env.ETCD_PORT or 4001
@@ -55,81 +35,69 @@ module.exports = class ConfigEtcd extends EventEmitter
     @discover = new Discover host: etcdHost, port: etcdPort, prefix: etcdPrefix
     this
 
-  ###*
-   * load the final config, merge with current environment config
-   *
-   * @function global.Config.prototype.load
-   * @param    {Function} cb callback if it needs to be asynchronous
-  ###
-  load: (cb) ->
-    @_loadBaseConfig()
 
+  # load the final config, merge with current environment config
+  # @method Config.prototype.load
+  # @param {String} configPath - the path from where to load the config (default: config)
+  # @param {Function} cb - callback if it needs to be asynchronous
+  load: (@configPath = 'config', cb) ->
+    @_loadBaseConfig()
     @_resolveEtcd =>
       @_buildConfig()
       @emit 'loaded'
-      if typeof cb is 'function'
-        cb @config
+      cb? @config
 
-  ###*
-   * get config
-   *
-   * @function global.Config.prototype.getConfig
-  ###
+
+  # get the current config
+  # @method Config.prototype.getConfig
+  # @return {Object} public Interface for getting the config
   getConfig: ->
     return @config
 
-  ###*
-   * build configuration
-   *
-   * @function global.Config.prototype._buildConfig
-   * @private
-  ###
+
+  # build configuration
+  # @method Config.prototype._buildConfig
+  # @private
+  # @return [Object] config final
   _buildConfig: ->
     buildConfig = {}
 
     for key, value of @flattened
       do (key, value) =>
 
-        if typeof value is 'string' and value.indexOf('ETCD_') is 0
+        if typeof value isnt 'string' or value.indexOf('ETCD_') isnt 0
+          return buildConfig[key] = value
 
-          service = value.substring(11)
-          throw Error("Service object for service #{service} not available") unless @services[service]?
-          url = @services[service].uri()
-          @trackChange[service] = url
+        service = value.substring 11
+        throw Error("Service object for service #{service} not available") unless @services[service]?
+        url = @services[service].uri()
+        @trackChange[service] = url
 
-          hostPort = url.match /.*\:\/\/(.*):(.*)$/
-          throw Error("Invalid ETCD service url format for url #{url}") unless hostPort?
+        hostPort = url.match /.*\:\/\/(.*):(.*)$/
+        throw new Error("Invalid ETCD service url format for url #{url}") unless hostPort?
 
-          if value.indexOf('ETCD_HOST::') is 0
-            buildConfig[key] = hostPort[1]
-          else if value.indexOf('ETCD_PORT::') is 0
-            buildConfig[key] = hostPort[2]
-          else
-            throw Error "Invalid ETCD config parameter: #{value}"
-
+        if value.indexOf('ETCD_HOST::') is 0
+          buildConfig[key] = hostPort[1]
+        else if value.indexOf('ETCD_PORT::') is 0
+          buildConfig[key] = hostPort[2]
         else
-          buildConfig[key] = value
+          throw new Error "Invalid ETCD config parameter: #{value}"
 
     @config = flat.unflatten buildConfig
 
 
-  ###*
-   * resolves regular config parameters
-   *
-   * @function global.Config.prototype._resolveStandardConfig
-   * @private
-  ###
+  # resolves regular config parameters
+  # @method Config.prototype._resolveStandardConfig
+  # @private
+  # @return [Object] flattened config
   _loadBaseConfig: ->
-    # TODO if you wanna run the test use the following line as jasmine overwrites string values
-    #schema = convict require(path.join(process.cwd(), './coverage/instrument/lib/config/schema'))
-    schema = convict require(path.join(process.cwd(), './lib/config/schema'))
-    env = argv.NODE_ENV or process.env.NODE_ENV
-    config = _.extend(
-      schema.loadFile path.join(process.cwd(), 'config/config.json')
-      schema.loadFile path.join(process.cwd(), "config/#{env}.json")
-    ).validate()
+    env = argv.NODE_ENV or process.env.NODE_ENV or 'development'
+    config = _.merge(
+      cjson.load path.join(process.cwd(), @configPath, 'config.json')
+      cjson.load path.join(process.cwd(), @configPath, "#{env}.json")
+    )
 
-    @baseConfig = _.cloneDeep JSON.parse(config.toString()), (value) ->
+    @baseConfig = _.cloneDeep config, (value) ->
       return unless typeof value is 'string'
 
       if value.indexOf("ENV::") is 0
@@ -137,14 +105,11 @@ module.exports = class ConfigEtcd extends EventEmitter
 
     @flattened = flat.flatten @baseConfig
 
-  ###*
-   * resolves etcd config parameters
-   *
-   * @function global.Config.prototype._resolveEtcd
-   * @param    {Object} Config
-   * @param    {Function} cb
-   * @private
-  ###
+
+  # resolves etcd config parameters
+  # @method Config.prototype._resolveEtcd
+  # @param [Function] cb
+  # @private
   _resolveEtcd: (cb) ->
     throw new Error('Discover service not initialized. You need to call init() first.') if typeof @discover is 'undefined'
 

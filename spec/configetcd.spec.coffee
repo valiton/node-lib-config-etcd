@@ -2,7 +2,7 @@ require 'jasmine-matchers'
 path = require 'path'
 rewire = require 'rewire'
 flat = require 'flat'
-ConfigEtcd = rewire "#{process.cwd()}/lib/configetcd"
+ConfigEtcd = rewire "#{process.cwd()}/src/configetcd"
 
 serviceVars =
   "hans": "tcp://wurst:4711"
@@ -35,16 +35,12 @@ describe 'ConfigEtcd', ->
   it 'should initialize the config', (done) ->
     process.env.NODE_ENV = 'jasmine'
     pathspy = spyOn(path, 'join').andCallFake (args...) ->
-      if args[1].indexOf('lib/config/schema') > -1
-        return "#{process.cwd()}/spec/helper/schema"
-      if args[1].indexOf('lib/config/schema') > -1
-        return "#{process.cwd()}/spec/helper/schema"
-      if args[1].indexOf('config/config.json') > -1
+      if args[1] is 'config/config.json'
         return "#{process.cwd()}/spec/helper/config.json"
-      if args[1].indexOf('config/jasmine.json') > -1
+      if args[1] is 'config/jasmine.json'
         return "#{process.cwd()}/spec/helper/jasmine.json"
 
-      # path.join.and.stub()
+      console.error "pathSpy Mock in test failed!"
 
 
     config = new ConfigEtcd()
@@ -71,16 +67,12 @@ describe 'ConfigEtcd', ->
   it 'should initialize the config and replace env values', (done) ->
     process.env.NODE_ENV = 'jasmine_with_env'
     spyOn(path, 'join').andCallFake (args...) ->
-      if args[1].indexOf('lib/config/schema') > -1
-        return "#{process.cwd()}/spec/helper/schema"
-      if args[1].indexOf('lib/config/schema') > -1
-        return "#{process.cwd()}/spec/helper/schema"
-      if args[1].indexOf('config/config.json') > -1
+      if args[1] is 'config/config.json'
         return "#{process.cwd()}/spec/helper/config.json"
-      if args[1].indexOf('config/jasmine_with_env.json') > -1
+      if args[1] is 'config/jasmine_with_env.json'
         return "#{process.cwd()}/spec/helper/jasmine_with_env.json"
 
-      #path.join.call path, args
+      console.error "pathSpy Mock in test failed!"
 
     config = new ConfigEtcd()
     config.discover = new DiscoverMock()
