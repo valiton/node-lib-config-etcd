@@ -29,7 +29,7 @@ module.exports = class ConfigEtcd extends EventEmitter
   # @method ConfigEtcd.prototype.init
   # @return {Object} the current instance for chaining
   init: ->
-    etcdHost = argv.ETCD_HOST or process.env.ETCD_HOST or 'etcd'
+    etcdHost = argv.ETCD_HOST or process.env.ETCD_HOST or 'localhost'
     etcdPort =  argv.ETCD_PORT or process.env.ETCD_PORT or 4001
     etcdPrefix =  argv.ETCD_PREFIX or process.env.ETCD_PREFIX or 'discover'
     @discover = new Discover host: etcdHost, port: etcdPort, prefix: etcdPrefix
