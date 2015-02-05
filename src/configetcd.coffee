@@ -115,18 +115,13 @@ module.exports = class ConfigEtcd extends EventEmitter
 
     for key, value of @flattened
       do (key, value) =>
-        #service = ""
-        # continue if it's not an ETCD value or if etcd service already exists
-        #unless (service = value.substring 11) and ( value.indexOf('ETCD_') is 0 ) and not @services[service]?
-        #  cb() if --remaining is 0
-        #  return
 
         if typeof value isnt 'string'
           cb() if --remaining is 0
           return
 
         service = value.substring 11
-        if @services[service]? or value.indexOf('ETCD_') is -1
+        if value.indexOf('ETCD_') isnt 0 or @services[service]?
           cb() if --remaining is 0
           return
 
