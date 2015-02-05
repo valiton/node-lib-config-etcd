@@ -34,14 +34,6 @@ describe 'ConfigEtcd', ->
 
   it 'should initialize the config', (done) ->
     process.env.NODE_ENV = 'jasmine'
-    pathspy = spyOn(path, 'join').andCallFake (args...) ->
-      if args[1] is 'config/config.json'
-        return "#{process.cwd()}/spec/helper/config.json"
-      if args[1] is 'config/jasmine.json'
-        return "#{process.cwd()}/spec/helper/jasmine.json"
-
-      console.error "pathSpy Mock in test failed!"
-
 
     config = new ConfigEtcd()
     config.discover = new DiscoverMock()
@@ -62,18 +54,10 @@ describe 'ConfigEtcd', ->
       config = config.getConfig()
       expect(config).toEqual(expected)
       done()
-    config.load()
+    config.load '/spec/helper/'
 
   it 'should initialize the config and replace env values', (done) ->
     process.env.NODE_ENV = 'jasmine_with_env'
-    spyOn(path, 'join').andCallFake (args...) ->
-      if args[1] is 'config/config.json'
-        return "#{process.cwd()}/spec/helper/config.json"
-      if args[1] is 'config/jasmine_with_env.json'
-        return "#{process.cwd()}/spec/helper/jasmine_with_env.json"
-
-      console.error "pathSpy Mock in test failed!"
-
     config = new ConfigEtcd()
     config.discover = new DiscoverMock()
 
@@ -92,7 +76,7 @@ describe 'ConfigEtcd', ->
       config = config.getConfig()
       expect(config).toEqual(expected)
       done()
-    config.load()
+    config.load '/spec/helper/'
 
   it 'should initialize the config and replace etcd values', (done) ->
 
@@ -117,7 +101,7 @@ describe 'ConfigEtcd', ->
     configInstance.flattened = flat.flatten testConfig
     configInstance._loadBaseConfig = ->
 
-    configInstance.load ->
+    configInstance.load '/spec/helper/', ->
       config = configInstance.getConfig()
       expect(config).toEqual expected
       done()
@@ -144,7 +128,7 @@ describe 'ConfigEtcd', ->
     configInstance.flattened = flat.flatten testConfig
     configInstance._loadBaseConfig = ->
 
-    configInstance.load ->
+    configInstance.load '/spec/helper/', ->
       serviceVars.hans3 = "tcp://wurst3:4711"
 
       configInstance.on 'changed', ->

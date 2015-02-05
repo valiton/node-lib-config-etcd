@@ -111,24 +111,29 @@ module.exports = class ConfigEtcd extends EventEmitter
   # @param [Function] cb
   # @private
   _resolveEtcd: (cb) ->
-    throw new Error('Discover service not initialized. You need to call init() first.') if typeof @discover is 'undefined'
-
     remaining = Object.keys(@flattened).length
 
     for key, value of @flattened
       do (key, value) =>
-        service = ""
+        #service = ""
         # continue if it's not an ETCD value or if etcd service already exists
-        unless (typeof value is 'string') and (service = value.substring 11) and ( value.indexOf('ETCD_') is 0 ) and not @services[service]?
-          if --remaining is 0
-            cb()
+        #unless (service = value.substring 11) and ( value.indexOf('ETCD_') is 0 ) and not @services[service]?
+        #  cb() if --remaining is 0
+        #  return
+
+        if typeof value isnt 'string'
+          cb() if --remaining is 0
+          return
+
+        service = value.substring 11
+        if @services[service]? or value.indexOf('ETCD_') is -1
+          cb() if --remaining is 0
           return
 
         @services[service] = @discover.resolve service
 
         @services[service].on 'resolved', ->
-          if --remaining is 0
-            cb()
+          cb() if --remaining is 0
 
         @services[service].on 'changed', =>
           if @trackChange[service] not in @services[service].list()

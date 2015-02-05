@@ -37,13 +37,13 @@
         <h1 id="lib-config-etcd">lib-config-etcd</h1><p>config lib with etcd support</p><h2 id="installation">Installation</h2>
 <pre><code>$ npm install config-etcd --save
 </code></pre><h2 id="benutzung">Benutzung</h2>
-<h3 id="node_env">NODE_ENV</h3><p>Set this environment var in your home-directory (eg. .bash_profile) or run this application with --NODE_ENV=...</p><h3 id="necessary-files">Necessary files</h3>
+<h3 id="node_env">NODE_ENV</h3><p>Set this environment var in your home-directory (eg. <code>~/.bash_profile</code>) or run this application with --NODE_ENV=...</p><h3 id="necessary-files">Necessary files</h3>
 <ul>
 <li>config/config.json</li>
 <li>config/{env}.json (where ENV is the environment var NODE_ENV)</li>
 </ul>
-<h3 id="env">ENV</h3><p><code>lib-config-etcd</code> can load values form envioronment variable.
-Use the prefix <code>ENV::</code> to load a config value from a environment variabel:</p><pre><code>$ export MYKEY=0123456789
+<h3 id="env">ENV</h3><p><code>config-etcd</code> can load values form envioronment variable.
+Use the prefix <code>ENV::</code> to load a config value from an environment variable:</p><pre><code>$ export MYKEY=0123456789
 </code></pre><p>Used in config.json:</p><pre><code>{
     &quot;config&quot;: {
        &quot;key&quot;: &quot;ENV::MYKEY&quot;
@@ -56,14 +56,14 @@ Use the prefix <code>ENV::</code> to load a config value from a environment vari
        &quot;serviceLocationPort&quot;: &quot;ETCD_PORT::myService&quot;
     }
 }
-</code></pre><p>To alow <code>lib-config-etcd</code> to find service in ETCD, the service have to be registerd e.g. by using <a href="https://github.com/totem/discover">discover</a>
-<code>lib-config-etcd</code> uses internal the <a href="https://github.com/totem/discover-client-node">discover-client</a></p><h4 id="configuring-etcd">Configuring ETCD</h4><p><code>lib-config-etcd</code>  uses envioronment variable or CLI-parameter <code>ETCD_HOST</code>, <code>ETCD_PORT</code>, <code>ETCD_PREFIX</code>  to find the ETCD Servers.</p><p>Default values are the following</p><ul>
-<li>ETCD_HOST etcd</li>
+</code></pre><p>To alow <code>config-etcd</code> to find service in ETCD, the service has to be registerd e.g. by using <a href="https://github.com/totem/discover">discover</a>
+<code>config-etcd</code> uses internal the <a href="https://github.com/totem/discover-client-node">discover-client</a></p><h4 id="configuring-etcd">Configuring ETCD</h4><p><code>config-etcd</code>  uses envioronment variable or CLI-parameter <code>ETCD_HOST</code>, <code>ETCD_PORT</code>, <code>ETCD_PREFIX</code>  to find the ETCD Servers.</p><p>Default values are the following</p><ul>
+<li>ETCD_HOST localhost</li>
 <li>ETCD_PORT 4001</li>
 <li>ETCD_PREFIX discover</li>
 </ul>
 <h2 id="example-coffee">Example.coffee</h2>
-<pre><code>configEtcd = require &#39;lib-config-etcd&#39;
+<pre><code>configEtcd = require &#39;config-etcd&#39;
 
 configEtcd.on &#39;loaded&#39;, -&gt;
   config = configEtcd.getConfig()
@@ -75,34 +75,36 @@ configEtcd.on &#39;changed&#39;, -&gt;
 
 configEtcd.load()
 </code></pre><p>see folder <strong>examples</strong></p><h2 id="api-dokumentation">Api-Dokumentation</h2><p>[doc/index.html]</p><h3 id="methoden">Methoden</h3>
-<h4 id="load-">load()</h4><p><code>load()</code> load&#39;s the config. Config loading is async since it has make network calls to etcd.</p><h4 id="getconfig-">getConfig()</h4><p><code>getConfig()</code> get the current config values. Only avalible after the <code>loaded</code> event got fired.</p><h4 id="on-event-cb-">on(&#39;event&#39;, cb)</h4><p><code>on(&#39;event&#39;, cb)</code> register event hanlder</p><h3 id="events">Events</h3>
+<h4 id="load-configpath-callback-">load(configPath, callback)</h4>
+<h6 id="configpath">configPath</h6><p>Type: <code>String</code>
+Default value: <code>./config</code></p><h6 id="callback">callback</h6><p>Type: <code>Function</code>
+Default value: <code>null</code></p><p><code>load()</code> load&#39;s the config. Config loading is async since it has to make network calls to etcd.</p><h4 id="getconfig-">getConfig()</h4><p><code>getConfig()</code> get the current config values. Only avalible after the <code>loaded</code> event got fired.</p><h4 id="on-event-cb-">on(event, cb)</h4>
+<h6 id="event">event</h6><p>Type: <code>String</code>
+Default value: <code>null</code></p><h6 id="callback">callback</h6><p>Type: <code>Function</code>
+Default value: <code>null</code></p><p><code>on(&#39;event&#39;, cb)</code> register event handler</p><h3 id="events">Events</h3>
 <h4 id="loaded">loaded</h4><p>event fires when config is load and  <code>getConfig()</code> can be used.</p><h5 id="changed">changed</h5><p>event fires when a config change in etcd happes.
-To get the updated config value use <code>getConfig()</code></p><h2 id="developlment">Developlment</h2>
-<h6 id="clone-repo">clone repo</h6>
+To get the updated config value use <code>getConfig()</code></p><h2 id="development">Development</h2><p>use <a href="https://github.com/nvie/gitflow">git-flow</a>!</p><h6 id="clone-repo">clone repo</h6>
 <pre><code>$ git clone git@github.com:valiton/node-lib-config-etcd.git
-</code></pre><h6 id="install-node-module">install node module</h6>
+</code></pre><h6 id="install-dependencies">install dependencies</h6>
 <pre><code>$ npm install
 </code></pre><h6 id="development-workflow-and-watch-each-code-change-restarts-the-build-">Development-Workflow/ and watch (each code change restarts the build)</h6>
 <pre><code>$ grunt dev
-</code></pre><h6 id="run-jasmine-tests">run Jasmine tests</h6><p>runs internal <strong>grunt vihbm</strong></p><pre><code>$ npm test
-</code></pre><h6 id="creat-release">creat release</h6>
+</code></pre><h6 id="lint-test-and-build-api-docs">lint, test and build api-docs</h6><p>runs internal <strong>grunt</strong></p><pre><code>$ npm test
+</code></pre><h6 id="create-release">create release</h6>
 <pre><code>$ grunt release:xxx ( xxx = major || minor || patch )
 </code></pre><h2 id="release-history">Release History</h2>
-<h3 id="0-1-0">0.1.0</h3>
+<h4 id="0-1-0-initial-version">0.1.0 - Initial Version</h4>
+<h2 id="authors-valiton-gmbh-">Authors (Valiton GmbH)</h2>
 <ul>
-<li>Initiale Version</li>
-</ul>
-<h2 id="autoren">Autoren</h2>
-<ul>
-<li>Valiton GmbH</li>
 <li>Johannes Stark</li>
 <li>Benedikt Weiner</li>
+<li>Bastian Behrens</li>
 </ul>
-
+<h2 id="license">License</h2><p>Copyright (c) 2015 Valiton GmbH Licensed under the MIT license.</p>
       </div>
     </div>
     <div id='footer'>
-  February 05, 15 10:33:16 by
+  February 05, 15 14:48:52 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
