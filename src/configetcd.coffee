@@ -101,7 +101,7 @@ module.exports = class ConfigEtcd extends EventEmitter
       return unless typeof value is 'string'
 
       if value.indexOf("ENV::") is 0
-        return process.env[value.substring(5)] or "ENV_VAR_#{envVar}_NO_SET"
+        return process.env[value.substring(5)] or "ENV_VAR_#{value.substring(5)}_NO_SET"
 
     @flattened = flat.flatten @baseConfig
 
