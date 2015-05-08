@@ -1,7 +1,7 @@
 {
   "name": "lib-config-etcd",
   "description": "config lib with etcd support",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "Valiton GmbH",
     "url": "http://www.valiton.com"
