@@ -67,6 +67,19 @@
   </li>
   <li>
     <span class='signature'>
+      <a href='#loadConfig-dynamic'>
+        #
+(void)
+<b>loadConfig</b><span>(configPath = &#39;config&#39;, cb)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      load the final config, merge with current environment config including cb null, config for promisification
+
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
       <a href='#getConfig-dynamic'>
         #
 (Object)
@@ -200,6 +213,47 @@
 </div>
   </div>
   <div class='method_details'>
+    <p class='signature' id='loadConfig-dynamic'>
+      #
+(void)
+<b>loadConfig</b><span>(configPath = &#39;config&#39;, cb)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>load the final config, merge with current environment config
+including cb null, config for promisification</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>configPath</span>
+      <span class='type'>
+        (
+          <tt>String</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'><ul> the path from where to load the config (default: config)
+</ul>
+</span>
+    </li>
+    <li>
+      <span class='name'>cb</span>
+      <span class='type'>
+        (
+          <tt>Function</tt>
+        )
+      </span>
+      &mdash;
+      <span class='desc'><ul> callback if it needs to be asynchronous
+</ul>
+</span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
     <p class='signature' id='getConfig-dynamic'>
       #
 (Object)
@@ -301,7 +355,7 @@
 </div>
     </div>
     <div id='footer'>
-  February 06, 15 10:46:41 by
+  May 08, 15 13:06:05 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>
