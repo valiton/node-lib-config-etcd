@@ -47,6 +47,15 @@ module.exports = class ConfigEtcd extends EventEmitter
       process.nextTick => @emit 'loaded'
       cb? @config
 
+  # load the final config, merge with current environment config
+  # including cb null, config for promisification
+  #
+  # @method Config.prototype.load
+  # @param {String} configPath - the path from where to load the config (default: config)
+  # @param {Function} cb - callback if it needs to be asynchronous
+  loadConfig: (configPath = 'config', cb) ->
+    @load configPath, (config) -> cb null, config
+
 
   # get the current config
   # @method Config.prototype.getConfig
