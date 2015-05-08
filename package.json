@@ -1,5 +1,5 @@
 {
-  "name": "config-etcd",
+  "name": "lib-config-etcd",
   "description": "config lib with etcd support",
   "version": "0.2.0",
   "author": {
